@@ -1,0 +1,35 @@
+{
+  "name": "fp-ts-svg-path-d",
+  "version": "0.0.1",
+  "description": "A functional programming library for working with svg path data strings in Typescript",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "/dist"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/justin-hackin/fp-ts-svg-path-d.git"
+  },
+  "keywords": [
+    "svg",
+    "path",
+    "fp-ts"
+  ],
+  "author": "Justin Barca",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/justin-hackin/fp-ts-svg-path-d/issues"
+  },
+  "homepage": "https://github.com/justin-hackin/fp-ts-svg-path-d#readme",
+  "dependencies": {
+    "fp-ts": "^2.10.5",
+    "svgpath": "^2.3.1"
+  },
+  "devDependencies": {
+    "typescript": "^4.3.4"
+  }
+}
