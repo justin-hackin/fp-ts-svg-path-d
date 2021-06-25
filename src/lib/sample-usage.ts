@@ -1,6 +1,8 @@
-import {function as fpFunction, either} from 'fp-ts';
-import {COMMAND_FACTORY, pathDToCommandArray, pushCommand, commandArrayToPathD} from './command';
-import {prettyPrintIdentityWithPrefix} from './util';
+import { function as fpFunction, either } from 'fp-ts';
+import {
+  COMMAND_FACTORY, pathDToCommandArray, pushCommand, commandArrayToPathD,
+} from './command';
+import { prettyPrintIdentityWithPrefix } from './util';
 
 const sampleCommandsString = fpFunction.pipe([],
   pushCommand(COMMAND_FACTORY.M([1, 1])),
@@ -8,8 +10,7 @@ const sampleCommandsString = fpFunction.pipe([],
   pushCommand(COMMAND_FACTORY.L([0, 20])),
   prettyPrintIdentityWithPrefix('1) >>> command array >>>'),
   commandArrayToPathD,
-  prettyPrintIdentityWithPrefix('1) >>> path data string >>>'),
-);
+  prettyPrintIdentityWithPrefix('1) >>> path data string >>>'));
 
 fpFunction.pipe(pathDToCommandArray(sampleCommandsString), either.map(
   fpFunction.flow(
@@ -18,6 +19,5 @@ fpFunction.pipe(pathDToCommandArray(sampleCommandsString), either.map(
     prettyPrintIdentityWithPrefix('2) >>> command array >>>'),
     commandArrayToPathD,
     prettyPrintIdentityWithPrefix('2) >>> path data string >>>'),
-  )),
-);
-
+  ),
+));

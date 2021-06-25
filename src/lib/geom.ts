@@ -1,14 +1,18 @@
 import { vec } from 'fp-ts-sized-vectors';
-import {Coord, PointLike, PointTuple, Point2D} from '../types/geom';
+import {
+  Coord, PointLike, PointTuple, Point2D,
+} from '../types/geom';
 
-const isNumber = (val: any) => typeof val === "number" && val === val;
+// self-comparison excludes NaN as NaN !== NaN
+// eslint-disable-next-line no-self-compare
+const isNumber = (val: any) => typeof val === 'number' && val === val;
 
 const isPointLike = (coord: Coord): coord is PointLike => isNumber((coord as PointLike).x)
   && isNumber((coord as PointLike).y);
 
 export const castCoordToRawPoint = (coord: Coord): Point2D => {
   if (isPointLike(coord)) {
-    const {x, y} = coord as PointLike;
+    const { x, y } = coord as PointLike;
     return vec(x, y);
   }
   if ((coord as PointTuple).length !== 2) {
@@ -17,4 +21,4 @@ export const castCoordToRawPoint = (coord: Coord): Point2D => {
   return vec(...coord);
 };
 
-export const rawPointToString = ([x, y]: Point2D) => `${x},${y}`; // converts the data structure returned from svgpath into array of Command objects
+export const rawPointToString = ([x, y]: Point2D) => `${x},${y}`;
