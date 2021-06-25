@@ -1,4 +1,6 @@
-import { array as fpArray, either, function as fpFunction } from 'fp-ts';
+import {
+  array as fpArray, either, function as fpFunction, semigroup,
+} from 'fp-ts';
 
 import svgpath from 'svgpath';
 import { Coord } from '../types/geom';
@@ -161,7 +163,10 @@ export const commandArrayToPathD = fpFunction.flow(fpArray.map(commandToString),
 
 export const reformatPathD = fpFunction.flow(pathDToCommandArray, either.map(commandArrayToPathD));
 
-export const pushCommand = (command: Command) => (commands: CommandArray) => {
-  commands.push(command);
-  return commands;
-};
+function getArraySemigroup<A = never>(): semigroup.Semigroup<Array<A>> {
+  return { concat: (x, y) => x.concat(y) };
+}
+
+export const pushCommand = (command: Command) => (
+  (commands: CommandArray) => getArraySemigroup<Command>().concat(commands, [command])
+);
