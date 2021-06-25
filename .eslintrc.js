@@ -20,6 +20,8 @@ module.exports = {
     'import/extensions': 0,
     'import/prefer-default-export': 0,
     'max-len': [2, { code: 120 }],
+    'no-restricted-syntax': 0,
+    'no-continue': 0,
     // https://stackoverflow.com/a/65768375/2780052
     'no-shadow': 'off',
     '@typescript-eslint/no-shadow': ['error'],
