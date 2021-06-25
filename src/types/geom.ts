@@ -1,6 +1,4 @@
-import { Vec } from 'fp-ts-sized-vectors';
-
-export type Point2D = Vec<2, number>;
+export type Point2D = [number, number];
 
 export interface PointLike {
   x: number,
@@ -8,5 +6,4 @@ export interface PointLike {
   [x: string]: any
 }
 
-export type PointTuple = [number, number];
-export type Coord = PointTuple | PointLike;
+export type Coord = Point2D | PointLike;
