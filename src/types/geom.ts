@@ -1,4 +1,4 @@
-import { Vec } from 'fp-ts-sized-vectors'
+import { Vec } from 'fp-ts-sized-vectors';
 
 export type Point2D = Vec<2, number>;
 

@@ -1,7 +1,7 @@
-import {array as fpArray, either, function as fpFunction} from 'fp-ts';
+import { array as fpArray, either, function as fpFunction } from 'fp-ts';
 
-import {Coord} from '../types/geom';
 import svgpath from 'svgpath';
+import { Coord } from '../types/geom';
 import {
   ArcCommand,
   BezierCommand,
@@ -16,21 +16,20 @@ import {
   OnlyToParamCommand,
   QuadraticBezierCommand,
   SymmetricCubicBezierCommand,
-  SymmetricQuadraticBezierCommand
+  SymmetricQuadraticBezierCommand,
 } from '../types/command';
-import {castCoordToRawPoint, rawPointToString} from './geom';
+import { castCoordToRawPoint, rawPointToString } from './geom';
 
 const BEZIER_COMMAND_CODES = [CODES.Q, CODES.T, CODES.C, CODES.S];
-const hasOnlyToParam = (command: Command): command is OnlyToParamCommand =>
-  [CODES.L, CODES.M, CODES.T]
-    .includes((command as OnlyToParamCommand).code);
+const hasOnlyToParam = (command: Command): command is OnlyToParamCommand => [CODES.L, CODES.M, CODES.T]
+  .includes((command as OnlyToParamCommand).code);
 
-const isBezierCommand = (command: Command): command is BezierCommand =>
-  BEZIER_COMMAND_CODES.includes((command as BezierCommand).code);
+export const isBezierCommand = (command: Command): command is BezierCommand => BEZIER_COMMAND_CODES
+  .includes((command as BezierCommand).code);
 
 // TODO: how to make this custom type guard, return type "command is DestinationCommand" does not work
 // TODO: remove casting in getDestinationPoints
-const isDestinationCommand = (command: Command): boolean => !!((command as DestinationCommand).to);
+export const isDestinationCommand = (command: Command): boolean => !!((command as DestinationCommand).to);
 
 const commandToString = (command: Command) => {
   if (command.code === CODES.Z) {
@@ -52,8 +51,11 @@ const commandToString = (command: Command) => {
   if (command.code === CODES.A) {
     const arcCommand = command as ArcCommand;
     const booleanToFlag = (flag: boolean): number => (flag ? 1 : 0);
-    return `${arcCommand.code} ${arcCommand.rx} ${arcCommand.ry} ${arcCommand.xAxisRotation} ${
-      booleanToFlag(arcCommand.sweepFlag)} ${booleanToFlag(arcCommand.largeArcFlag)} ${rawPointToString(arcCommand.to)}`;
+    const {
+      code, rx, ry, xAxisRotation, sweepFlag, largeArcFlag, to,
+    } = arcCommand;
+    return [code, rx, ry, xAxisRotation,
+      booleanToFlag(sweepFlag), booleanToFlag(largeArcFlag), rawPointToString(to)].join(' ');
   }
   // if this runs then all commands have not been covered above
   throw new Error('Unrecognized command code');
@@ -109,7 +111,7 @@ function deserializePathD(d: string): either.Either<Array<String>, ISvgPath> {
   let parsed: ISvgPath = svgpath(d);
   // TODO: PR for svgpath to add err to interface
   // @ts-ignore
-  if (parsed.err) {return either.left(parsed.err as Array<String>);}
+  if (parsed.err) { return either.left(parsed.err as Array<String>); }
 
   parsed = parsed.abs();
   return either.right(parsed);
@@ -140,8 +142,8 @@ function svgPathToCommandArray(svgPath: ISvgPath): CommandArray {
     } else if (code === 'Q' || code === 'S') {
       // TODO: make DRY while preserving typing
       // can't splat [params[0], params[1]], [params[2], params[3]] inside command factory functions
-      commandList.push(code === 'Q' ?
-        COMMAND_FACTORY.Q([params[0], params[1]], [params[2], params[3]])
+      commandList.push(code === 'Q'
+        ? COMMAND_FACTORY.Q([params[0], params[1]], [params[2], params[3]])
         : COMMAND_FACTORY.S([params[0], params[1]], [params[2], params[3]]));
     } else if (code === 'A') {
       commandList.push(COMMAND_FACTORY.A(

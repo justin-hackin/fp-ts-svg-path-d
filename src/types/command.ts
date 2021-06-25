@@ -1,4 +1,4 @@
-import {Point2D} from './geom';
+import { Point2D } from './geom';
 
 export enum CODES { M = 'M', L = 'L', C = 'C', S = 'S', Q = 'Q', T = 'T', A = 'A', Z = 'Z' }
 
@@ -64,4 +64,3 @@ export type BezierCommand = QuadraticBezierCommand | SymmetricQuadraticBezierCom
   CubicBezierCommand | SymmetricCubicBezierCommand;
 export type OnlyToParamCommand = LineCommand | MoveCommand | SymmetricQuadraticBezierCommand;
 export type CommandArray = Array<Command>;
-
