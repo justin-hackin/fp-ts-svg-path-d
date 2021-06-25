@@ -1,3 +1,4 @@
+import { eq } from 'fp-ts';
 import { Point2D } from './geom';
 
 export enum CODES { M = 'M', L = 'L', C = 'C', S = 'S', Q = 'Q', T = 'T', A = 'A', Z = 'Z' }
@@ -64,3 +65,12 @@ export type BezierCommand = QuadraticBezierCommand | SymmetricQuadraticBezierCom
   CubicBezierCommand | SymmetricCubicBezierCommand;
 export type OnlyToParamCommand = LineCommand | MoveCommand | SymmetricQuadraticBezierCommand;
 export type CommandArray = Array<Command>;
+
+export const eqCommand: eq.Eq<Command> = {
+  equals: (a, b) => {
+    if (a === b) { return true; }
+    if (a.code !== b.code) { return false; }
+    // TODO: is there a better way to do this without equality for each command type
+    return JSON.stringify(a) === JSON.stringify(b);
+  },
+};
