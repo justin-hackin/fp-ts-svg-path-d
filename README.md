@@ -8,6 +8,4 @@ Although this library can parse all valid path data using `svgpath` package unde
 
 The rationale behind using this subset: trigonometric functions can be used to obtain absolute coordinates relative to any other coordinate systems. Current position after V/H commands or relative commands depend on the previous command, which could depend on the previous command (recursively) making iterating over and modifying paths cumbersome. Using this subset, it's easier to plot a new command relative to the previous endpoint and/or tangent.
 
-All coordinate data is stored as a length 2 vector using [fp-ts-sized-vectors](https://github.com/no-day/fp-ts-sized-vectors). This has the benefit of allowing you to splat the vector into a constructor for another point/geometry interface without errors about regarding the indeterminancy of the array length. 
-
 **WARNING**: This is a work in progress and is not a published library. The author of this work is only just learning fp-ts and sometimes from others who are also just learning. This library is not for use in production code.

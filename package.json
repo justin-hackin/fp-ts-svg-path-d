@@ -28,7 +28,6 @@
   "homepage": "https://github.com/justin-hackin/fp-ts-svg-path-d#readme",
   "dependencies": {
     "fp-ts": "^2.10.5",
-    "fp-ts-sized-vectors": "^0.1.0",
     "svgpath": "^2.3.1"
   },
   "devDependencies": {
