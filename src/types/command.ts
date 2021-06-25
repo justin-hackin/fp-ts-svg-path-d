@@ -1,4 +1,4 @@
-import {RawPoint} from './geom';
+import {Point2D} from './geom';
 
 export enum CODES { M = 'M', L = 'L', C = 'C', S = 'S', Q = 'Q', T = 'T', A = 'A', Z = 'Z' }
 
@@ -7,7 +7,7 @@ export interface BaseCommand {
 }
 
 export interface DestinationCommand extends BaseCommand {
-  to: RawPoint
+  to: Point2D
 }
 
 export interface MoveCommand extends DestinationCommand {
@@ -20,18 +20,18 @@ export interface LineCommand extends DestinationCommand {
 
 export interface CubicBezierCommand extends DestinationCommand {
   code: CODES.C
-  ctrl1: RawPoint
-  ctrl2: RawPoint
+  ctrl1: Point2D
+  ctrl2: Point2D
 }
 
 export interface SymmetricCubicBezierCommand extends DestinationCommand {
   code: CODES.S
-  ctrl2: RawPoint
+  ctrl2: Point2D
 }
 
 export interface QuadraticBezierCommand extends DestinationCommand {
   code: CODES.Q
-  ctrl1: RawPoint
+  ctrl1: Point2D
 }
 
 export interface SymmetricQuadraticBezierCommand extends DestinationCommand {

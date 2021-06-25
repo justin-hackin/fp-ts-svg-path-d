@@ -1,9 +1,10 @@
-export interface RawPoint {
+import { Vec } from 'fp-ts-sized-vectors'
+
+export type Point2D = Vec<2, number>;
+
+export interface PointLike {
   x: number,
   y: number,
-}
-
-export interface PointLike extends RawPoint {
   [x: string]: any
 }
 
