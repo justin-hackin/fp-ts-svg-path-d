@@ -22,9 +22,6 @@ export const castCoordToRawPoint = (coord: Coord): Point2D => {
     const { x, y } = coord as PointLike;
     return [x, y];
   }
-  if ((coord as Point2D).length !== 2) {
-    throw new Error(`expected a PointLike object or an array of length 2 but instead saw ${coord}`);
-  }
   return [...coord];
 };
 
