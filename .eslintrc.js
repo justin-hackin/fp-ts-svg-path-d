@@ -14,6 +14,7 @@ module.exports = {
   },
   plugins: [
     '@typescript-eslint',
+    'jest',
   ],
   rules: {
     'import/extensions': 0,
