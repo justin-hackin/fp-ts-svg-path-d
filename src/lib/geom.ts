@@ -3,7 +3,6 @@ import {
   Coord, PointLike, Point2D,
 } from '../types/geom';
 
-export const point = (x: number, y: number): Point2D => [x, y];
 
 const eqNumber: eq.Eq<number> = { equals: (x, y) => x === y };
 
@@ -17,8 +16,7 @@ const isNumber = (val: any) => typeof val === 'number';
 const isPointLike = (coord: Coord): coord is PointLike => isNumber((coord as PointLike).x)
   && isNumber((coord as PointLike).y);
 
-
-// note JSON.stringify([NaN]) === "[null]", using "accurate" replacer from util.ts adds quotes to e.g. ["NaN"]
+// note JSON.stringify([NaN]) === "[null]", using "accurate" replacer from util.ts adds quotes: ["NaN"]
 export const stringifyCoord = (coord: Coord) => (isPointLike(coord)
   ? `{x:${coord.x}, y:${coord.y}}` : `[${coord.join(',')}]`);
 
@@ -34,6 +32,14 @@ const assertPointValuesValid = (coord: Coord) => {
       }: both coordinate values must not be NaN or +/-Infinity`,
     );
   }
+};
+
+export const point2D = (x: number, y: number): Point2D => {
+  if (!isFiniteNumber(x) || !isFiniteNumber(y)) {
+    throw new Error(`point2D failed with parameters ${x}, ${y
+    }: both parameters must not be NaN or +/-Infinity`);
+  }
+  return [x, y];
 };
 
 export const castCoordToPoint2D = (coord: Coord): Point2D => {
