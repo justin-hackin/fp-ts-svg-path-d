@@ -17,7 +17,7 @@ const isNumber = (val: any) => typeof val === 'number' && val === val;
 const isPointLike = (coord: Coord): coord is PointLike => isNumber((coord as PointLike).x)
   && isNumber((coord as PointLike).y);
 
-export const castCoordToRawPoint = (coord: Coord): Point2D => {
+export const castCoordToPoint2D = (coord: Coord): Point2D => {
   if (isPointLike(coord)) {
     const { x, y } = coord as PointLike;
     return [x, y];
