@@ -20,7 +20,7 @@ import {
   SymmetricCubicBezierCommand,
   SymmetricQuadraticBezierCommand,
 } from '../types/command';
-import { castCoordToRawPoint, rawPointToString } from './geom';
+import { castCoordToPoint2D, rawPointToString } from './geom';
 
 const BEZIER_COMMAND_CODES = [CODES.Q, CODES.T, CODES.C, CODES.S];
 const hasOnlyToParam = (command: Command): command is OnlyToParamCommand => [CODES.L, CODES.M, CODES.T]
@@ -66,31 +66,31 @@ const commandToString = (command: Command) => {
 export const COMMAND_FACTORY = {
   M: (to: Coord): MoveCommand => ({
     code: CODES.M,
-    to: castCoordToRawPoint(to),
+    to: castCoordToPoint2D(to),
   }),
   L: (to: Coord): LineCommand => ({
     code: CODES.L,
-    to: castCoordToRawPoint(to),
+    to: castCoordToPoint2D(to),
   }),
   C: (ctrl1: Coord, ctrl2: Coord, to: Coord): CubicBezierCommand => ({
     code: CODES.C,
-    to: castCoordToRawPoint(to),
-    ctrl1: castCoordToRawPoint(ctrl1),
-    ctrl2: castCoordToRawPoint(ctrl2),
+    to: castCoordToPoint2D(to),
+    ctrl1: castCoordToPoint2D(ctrl1),
+    ctrl2: castCoordToPoint2D(ctrl2),
   }),
   S: (ctrl2: Coord, to: Coord): SymmetricCubicBezierCommand => ({
     code: CODES.S,
-    to: castCoordToRawPoint(to),
-    ctrl2: castCoordToRawPoint(ctrl2),
+    to: castCoordToPoint2D(to),
+    ctrl2: castCoordToPoint2D(ctrl2),
   }),
   Q: (ctrl1: Coord, to: Coord): QuadraticBezierCommand => ({
     code: CODES.Q,
-    to: castCoordToRawPoint(to),
-    ctrl1: castCoordToRawPoint(ctrl1),
+    to: castCoordToPoint2D(to),
+    ctrl1: castCoordToPoint2D(ctrl1),
   }),
   T: (to: Coord): SymmetricQuadraticBezierCommand => ({
     code: CODES.T,
-    to: castCoordToRawPoint(to),
+    to: castCoordToPoint2D(to),
   }),
   A: (
     radiusX: number, radiusY: number, xAxisRotation: number, largeArcFlag: boolean, sweepFlag: boolean, to: Coord,
@@ -101,7 +101,7 @@ export const COMMAND_FACTORY = {
     largeArcFlag,
     sweepFlag,
     xAxisRotation,
-    to: castCoordToRawPoint(to),
+    to: castCoordToPoint2D(to),
   }),
   Z: (): CloseCommand => ({
     code: CODES.Z,
