@@ -167,10 +167,6 @@ function getArrayMonoid<A = never>(): monoid.Monoid<Array<A>> {
   return { concat: (x, y) => x.concat(y), empty: [] };
 }
 
-export const pushCommand = (command: Command) => (
-  (commands: CommandArray) => getArrayMonoid<Command>().concat(commands, [command])
-);
-
 export const pushCommands = (appendCommands: Array<Command>) => (
   (commands: CommandArray) => getArrayMonoid<Command>().concat(commands, appendCommands)
 );
