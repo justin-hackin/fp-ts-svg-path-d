@@ -1,5 +1,5 @@
 import {
-  array as fpArray, either, function as fpFunction, semigroup,
+  array as fpArray, either, function as fpFunction, monoid,
 } from 'fp-ts';
 
 import svgpath from 'svgpath';
@@ -163,10 +163,14 @@ export const commandArrayToPathD = fpFunction.flow(fpArray.map(commandToString),
 
 export const reformatPathD = fpFunction.flow(pathDToCommandArray, either.map(commandArrayToPathD));
 
-function getArraySemigroup<A = never>(): semigroup.Semigroup<Array<A>> {
-  return { concat: (x, y) => x.concat(y) };
+function getArrayMonoid<A = never>(): monoid.Monoid<Array<A>> {
+  return { concat: (x, y) => x.concat(y), empty: [] };
 }
 
 export const pushCommand = (command: Command) => (
-  (commands: CommandArray) => getArraySemigroup<Command>().concat(commands, [command])
+  (commands: CommandArray) => getArrayMonoid<Command>().concat(commands, [command])
+);
+
+export const pushCommands = (appendCommands: Array<Command>) => (
+  (commands: CommandArray) => getArrayMonoid<Command>().concat(commands, appendCommands)
 );
