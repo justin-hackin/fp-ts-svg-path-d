@@ -63,6 +63,8 @@ export type Command =
   | CloseCommand;
 export type BezierCommand = QuadraticBezierCommand | SymmetricQuadraticBezierCommand |
   CubicBezierCommand | SymmetricCubicBezierCommand;
+export type SymmetricBezierCommand = SymmetricQuadraticBezierCommand | SymmetricCubicBezierCommand;
+
 export type OnlyToParamCommand = LineCommand | MoveCommand | SymmetricQuadraticBezierCommand;
 export type CommandArray = Array<Command>;
 
