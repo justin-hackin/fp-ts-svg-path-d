@@ -1,7 +1,6 @@
 import {
-  array as fpArray, either, function as fpFunction, monoid,
+  array as fpArray, either, function as fpFunction, monoid, option,
 } from 'fp-ts';
-
 import svgpath from 'svgpath';
 import { Coord } from '../types/geom';
 import {
@@ -16,18 +15,23 @@ import {
   LineCommand,
   MoveCommand,
   OnlyToParamCommand,
-  QuadraticBezierCommand,
+  QuadraticBezierCommand, SymmetricBezierCommand,
   SymmetricCubicBezierCommand,
   SymmetricQuadraticBezierCommand,
 } from '../types/command';
 import { castCoordToPoint2D, rawPointToString } from './geom';
 
 const BEZIER_COMMAND_CODES = [CODES.Q, CODES.T, CODES.C, CODES.S];
+const SYMETRIC_BEZIER_COMMAND_CODES = [CODES.T, CODES.S];
+
 const hasOnlyToParam = (command: Command): command is OnlyToParamCommand => [CODES.L, CODES.M, CODES.T]
   .includes((command as OnlyToParamCommand).code);
 
 export const isBezierCommand = (command: Command): command is BezierCommand => BEZIER_COMMAND_CODES
   .includes((command as BezierCommand).code);
+
+export const isSymmetricBezierCommand = (command: Command): command is SymmetricBezierCommand => (
+  SYMETRIC_BEZIER_COMMAND_CODES.includes((command as SymmetricBezierCommand).code));
 
 // TODO: how to make this custom type guard, return type "command is DestinationCommand" does not work
 // TODO: remove casting in getDestinationPoints
@@ -170,3 +174,49 @@ function getArrayMonoid<A = never>(): monoid.Monoid<Array<A>> {
 export const pushCommands = (appendCommands: Array<Command>) => (
   (commands: CommandArray) => getArrayMonoid<Command>().concat(commands, appendCommands)
 );
+
+const lastCommand = (commands: CommandArray) => fpArray.last<Command>(commands);
+
+type CommandValidation = (commands: CommandArray, nextCommand: Command) => option.Option<string>;
+
+const validateFirstCommandIsMove = (commands: CommandArray, nextCommand: Command) => (
+  (!commands.length && nextCommand.code !== CODES.M)
+    ? option.some(`first command must be "M" but saw "${nextCommand.code}"`) : option.none);
+
+const lastCommandIsMove = (commands: CommandArray) => option.fold<Command, boolean>(
+  () => false, (command) => command.code === 'M',
+)(lastCommand(commands));
+
+const validateNoMoveAfterMove = (commands: CommandArray, nextCommand: Command) => (
+  lastCommandIsMove(commands) && nextCommand.code === CODES.M
+    ? option.some('move command following another move command is redundant') : option.none
+);
+
+const validateSymmetricCommandFollowsBezier = (commands: CommandArray, nextCommand: Command) => {
+  if (!isSymmetricBezierCommand(nextCommand)) { return option.none; }
+  const lastCom = lastCommand(commands);
+  const lastComIsBezier = option.fold(() => false, isBezierCommand);
+  const getCode = option.fold<Command, string>(() => 'none', (com) => com.code);
+  return (!lastComIsBezier(lastCom))
+    ? option.some(`safelyPushCommand: invalid command "${nextCommand.code
+    }": must preceed bezier command but instead saw ${getCode(lastCom)}`) : option.none;
+};
+
+const newCommandValidations: Array<CommandValidation> = [
+  validateFirstCommandIsMove,
+  validateSymmetricCommandFollowsBezier,
+  validateNoMoveAfterMove,
+];
+
+export const safelyPushCommand = (command: Command) => either.map((commands: CommandArray) => {
+  // the errors don't overlap yet but in future errors may co-exist
+  const validationErrors = fpFunction.pipe(newCommandValidations,
+    fpArray.map((validation) => validation(commands, command)),
+    fpArray.filter(option.isSome),
+    fpArray.map(option.fold(() => undefined, (some) => some)));
+
+  if (validationErrors.length > 0) {
+    return either.left(validationErrors);
+  }
+  return either.right(pushCommands([command])(commands));
+});

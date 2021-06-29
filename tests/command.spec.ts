@@ -1,27 +1,32 @@
-import { COMMAND_FACTORY } from '../src';
-import { eqCommand } from '../src/types/command';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import '@relmify/jest-fp-ts';
+
+import { either } from 'fp-ts';
+import { COMMAND_FACTORY, isBezierCommand } from '../src';
+import { CODES, CommandArray, eqCommand } from '../src/types/command';
 import { arraySetsEqual, JSONClone } from './util';
+import { isSymmetricBezierCommand, safelyPushCommand } from '../src/lib/command';
+
+const SAMPLE_COMMANDS = [
+  COMMAND_FACTORY.M([0, 1]),
+  COMMAND_FACTORY.L([2, 2]),
+  COMMAND_FACTORY.Q([2, 2], [8, 8]),
+  COMMAND_FACTORY.S([2, 2], [8, 8]),
+  COMMAND_FACTORY.C([2, 2], [8, 8], [4, 4]),
+  COMMAND_FACTORY.T([9, 0]),
+  COMMAND_FACTORY.A(10, 20, 0, false, false, [7, 7]),
+  COMMAND_FACTORY.Z(),
+];
 
 describe('command operations', () => {
+  it('sample test cases cover all commands, with command codes unique across sample set', () => {
+    const sampleCodes = SAMPLE_COMMANDS.map(({ code }) => code);
+    const sampleCodesSet = new Set(sampleCodes);
+    expect(sampleCodesSet.size).toEqual(sampleCodes.length);
+    expect(arraySetsEqual(sampleCodesSet, new Set(Object.keys(COMMAND_FACTORY))));
+  });
+
   describe('eqCommand', () => {
-    const SAMPLE_COMMANDS = [
-      COMMAND_FACTORY.M([0, 1]),
-      COMMAND_FACTORY.L([2, 2]),
-      COMMAND_FACTORY.Q([2, 2], [8, 8]),
-      COMMAND_FACTORY.S([2, 2], [8, 8]),
-      COMMAND_FACTORY.C([2, 2], [8, 8], [4, 4]),
-      COMMAND_FACTORY.T([9, 0]),
-      COMMAND_FACTORY.A(10, 20, 0, false, false, [7, 7]),
-      COMMAND_FACTORY.Z(),
-    ];
-
-    it('sample test cases cover all commands, with command codes unique across sample set', () => {
-      const sampleCodes = SAMPLE_COMMANDS.map(({ code }) => code);
-      const sampleCodesSet = new Set(sampleCodes);
-      expect(sampleCodesSet.size).toEqual(sampleCodes.length);
-      expect(arraySetsEqual(sampleCodesSet, new Set(Object.keys(COMMAND_FACTORY))));
-    });
-
     it('returns true when passed 2 references to the same object', () => {
       for (const command of SAMPLE_COMMANDS) {
         expect(eqCommand.equals(command, command)).toEqual(true);
@@ -70,6 +75,37 @@ describe('command operations', () => {
           expect(eqCommand.equals(clonedCommand, command)).toEqual(false);
         }
       }
+    });
+  });
+
+  describe('safelyPushCommand', () => {
+    it('returns left if a non-move command is initially applied', () => {
+      const nonMoveCommands = SAMPLE_COMMANDS.filter(({ code }) => code !== CODES.M);
+      for (const com of nonMoveCommands) {
+        expect(safelyPushCommand(com)(either.right([]))).toEqualLeft(
+          `safelyPushCommand: first command must be "M" but saw "${com.code}"`,
+        );
+      }
+    });
+
+    it('returns left if a symmetric bezier curve follows a non-bezier command', () => {
+      const bezierCommands = SAMPLE_COMMANDS.filter(isBezierCommand);
+      const symmetricBezierCommands = SAMPLE_COMMANDS.filter(isSymmetricBezierCommand);
+      const startedPath = safelyPushCommand(COMMAND_FACTORY.M([0, 0]))(either.right([]));
+
+      for (const previousCommand of bezierCommands) {
+        for (const candidateItem of symmetricBezierCommands) {
+          const withPrevious = safelyPushCommand(previousCommand)(startedPath);
+          expect(withPrevious).toBeRight();
+          expect(safelyPushCommand(candidateItem)).toBeLeft();
+        }
+      }
+    });
+
+    it('returns a left if a move command follows another move command', () => {
+      const startedPath = safelyPushCommand(COMMAND_FACTORY.M([0, 0]))(either.right([] as CommandArray));
+      expect(startedPath).toBeRight();
+      expect(safelyPushCommand(COMMAND_FACTORY.M([1, 2]))(startedPath)).toBeLeft();
     });
   });
 });
