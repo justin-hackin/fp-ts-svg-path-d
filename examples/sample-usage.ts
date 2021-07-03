@@ -1,8 +1,8 @@
 import { function as fpFunction, either } from 'fp-ts';
 import {
   COMMAND_FACTORY, pathDToCommandArray, commandArrayToPathD, pushCommands,
-} from './command';
-import { prettyPrintIdentityWithPrefix } from './util';
+} from '../src/lib/command';
+import { prettyPrintIdentityWithPrefix } from '../src';
 
 const sampleCommandsString = fpFunction.pipe([],
   pushCommands([
