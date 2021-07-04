@@ -3,7 +3,6 @@ import {
   Coord, PointLike, Point2D,
 } from '../types/geom';
 
-
 const eqNumber: eq.Eq<number> = { equals: (x, y) => x === y };
 
 export const eqPoint: eq.Eq<Point2D> = array.getEq(eqNumber);
@@ -52,3 +51,11 @@ export const castCoordToPoint2D = (coord: Coord): Point2D => {
 };
 
 export const rawPointToString = ([x, y]: Point2D) => `${x},${y}`;
+
+export const TWO_PI = Math.PI * 2;
+export const polarPoint = (radius: number) => (circleFraction: number) :Point2D => {
+  const trigParam = circleFraction * TWO_PI - TWO_PI / 4;
+  return [
+    Math.cos(trigParam) * radius, Math.sin(trigParam) * radius,
+  ];
+};

@@ -166,7 +166,9 @@ export const reformatPathD = fpFunction.flow(pathDToCommandArray, either.map(com
 function getArrayMonoid<A = never>(): monoid.Monoid<Array<A>> {
   return { concat: (x, y) => x.concat(y), empty: [] };
 }
+export const commandConcat = (appendCommands: CommandArray) => (commands: CommandArray) => (
+  getArrayMonoid<Command>().concat(commands, appendCommands));
 
 export const pushCommands = (appendCommands: Array<Command>) => (
-  (commands: CommandArray) => getArrayMonoid<Command>().concat(commands, appendCommands)
+  (commands: CommandArray) => commandConcat(appendCommands)(commands)
 );
