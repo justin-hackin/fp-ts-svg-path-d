@@ -1,6 +1,7 @@
 import { COMMAND_FACTORY } from '../src';
 import { eqCommand } from '../src/types/command';
 import { arraySetsEqual, JSONClone } from './util';
+import { Point2D } from '../src/types/geom';
 
 describe('command operations', () => {
   describe('eqCommand', () => {
@@ -51,12 +52,7 @@ describe('command operations', () => {
       number: (num: number) => num + 1,
       boolean: (bool: boolean) => !bool,
       // how to safely infer object type corresponds to Point2D?
-      object: (coord: Array<number>) => {
-        if (!coord.length || coord.length !== 2) {
-          throw new Error(`expected command key of type "object" to be a length 2 tuple but found: ${coord}`);
-        }
-        return coord.map((num) => num + 1);
-      },
+      object: ({ x, y }: Point2D) => ({ x: x + 1, y: y - 1 }),
     };
 
     it('a cloned command will become unequal to its source if any property it has is modified', () => {
