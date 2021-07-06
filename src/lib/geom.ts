@@ -1,4 +1,4 @@
-import { eq } from 'fp-ts';
+import {eq, number, semigroup} from 'fp-ts';
 import {
   Coord, PointLike, Point2D, PointTuple,
 } from '../types/geom';
@@ -12,6 +12,13 @@ export const eqPoint: eq.Eq<Point2D> = eq.struct({
   x: eqNumberRoughly,
   y: eqNumberRoughly,
 });
+
+const pointSumMonoid: semigroup.Semigroup<Point2D> = semigroup.struct({
+  x: number.SemigroupSum,
+  y: number.SemigroupSum,
+});
+
+export const addPoints = pointSumMonoid.concat;
 
 // self-comparison excludes NaN as NaN !== NaN
 // eslint-disable-next-line no-self-compare
