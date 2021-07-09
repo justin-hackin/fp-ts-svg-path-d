@@ -21,7 +21,7 @@ fpFunction.pipe(pathDToCommandArray(sampleCommandsString), either.map(
   fpFunction.flow(
     pushCommands([
       COMMAND_FACTORY.Q([20, 20], [20, 40]),
-      COMMAND_FACTORY.S([0, 20], [0, 0]),
+      COMMAND_FACTORY.C([0, 20], [0, 0], [20, 20]),
     ]),
     prettyPrintIdentityWithPrefix('2) >>> command array >>>'),
     commandArrayToPathD,

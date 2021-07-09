@@ -9,9 +9,7 @@ describe('command operations', () => {
       COMMAND_FACTORY.M([0, 1]),
       COMMAND_FACTORY.L([2, 2]),
       COMMAND_FACTORY.Q([2, 2], [8, 8]),
-      COMMAND_FACTORY.S([2, 2], [8, 8]),
       COMMAND_FACTORY.C([2, 2], [8, 8], [4, 4]),
-      COMMAND_FACTORY.T([9, 0]),
       COMMAND_FACTORY.A(10, 20, 0, false, false, [7, 7]),
       COMMAND_FACTORY.Z(),
     ];

@@ -1,7 +1,7 @@
 import { eq } from 'fp-ts';
 import { Point2D } from './geom';
 
-export enum CODES { M = 'M', L = 'L', C = 'C', S = 'S', Q = 'Q', T = 'T', A = 'A', Z = 'Z' }
+export enum CODES { M = 'M', L = 'L', C = 'C', Q = 'Q', A = 'A', Z = 'Z' }
 
 export interface BaseCommand {
   code: CODES,
@@ -25,18 +25,9 @@ export interface CubicBezierCommand extends DestinationCommand {
   ctrl2: Point2D
 }
 
-export interface SymmetricCubicBezierCommand extends DestinationCommand {
-  code: CODES.S
-  ctrl2: Point2D
-}
-
 export interface QuadraticBezierCommand extends DestinationCommand {
   code: CODES.Q
   ctrl1: Point2D
-}
-
-export interface SymmetricQuadraticBezierCommand extends DestinationCommand {
-  code: CODES.T
 }
 
 export interface ArcCommand extends DestinationCommand {
@@ -56,14 +47,11 @@ export type Command =
   MoveCommand
   | LineCommand
   | CubicBezierCommand
-  | SymmetricCubicBezierCommand
   | QuadraticBezierCommand
-  | SymmetricQuadraticBezierCommand
   | ArcCommand
   | CloseCommand;
-export type BezierCommand = QuadraticBezierCommand | SymmetricQuadraticBezierCommand |
-  CubicBezierCommand | SymmetricCubicBezierCommand;
-export type OnlyToParamCommand = LineCommand | MoveCommand | SymmetricQuadraticBezierCommand;
+export type BezierCommand = QuadraticBezierCommand | CubicBezierCommand;
+export type OnlyToParamCommand = LineCommand | MoveCommand;
 export type CommandArray = Array<Command>;
 
 export const eqCommand: eq.Eq<Command> = {
