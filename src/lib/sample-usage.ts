@@ -1,8 +1,11 @@
-import { function as fpFunction, either } from 'fp-ts';
+import { function as fpFunction, either, function as fpFunc } from 'fp-ts';
+import fs from 'fs';
+
 import {
   COMMAND_FACTORY, pathDToCommandArray, commandArrayToPathD, pushCommands,
 } from './command';
-import { prettyPrintIdentityWithPrefix } from './util';
+import { centeredViewBox, prettyPrintIdentityWithPrefix, renderPathToSvg } from './util';
+import { bezierOval } from './shapes';
 
 const sampleCommandsString = fpFunction.pipe([],
   pushCommands([
@@ -25,3 +28,15 @@ fpFunction.pipe(pathDToCommandArray(sampleCommandsString), either.map(
     prettyPrintIdentityWithPrefix('2) >>> path data string >>>'),
   ),
 ));
+
+const STAR_RADIUS = 1000;
+fpFunc.pipe(
+  bezierOval(STAR_RADIUS, STAR_RADIUS / 2),
+  commandArrayToPathD,
+  (pathD: string) => renderPathToSvg(
+    centeredViewBox(STAR_RADIUS), pathD, { stroke: 'black', 'stroke-width': '5px', fill: 'none' },
+  ),
+  (svg: string) => {
+    fs.writeFileSync('bezier-oval.svg', svg);
+  },
+);
